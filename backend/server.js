@@ -46,12 +46,21 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
-// Mount routes
+// Mount routes (supporting both /api prefix and root aliases)
 app.use('/api/auth', require('./routes/auth'));
+app.use('/auth', require('./routes/auth'));
+
 app.use('/api/salons', require('./routes/salons'));
+app.use('/salons', require('./routes/salons'));
+
 app.use('/api/slots', require('./routes/slots'));
+app.use('/slots', require('./routes/slots'));
+
 app.use('/api/bookings', require('./routes/bookings'));
+app.use('/bookings', require('./routes/bookings'));
+
 app.use('/api/admin', require('./routes/admin'));
+app.use('/admin', require('./routes/admin'));
 
 // Root endpoint
 app.get('/', (req, res) => {
