@@ -12,27 +12,27 @@ const db = require('../config/db');
  */
 exports.getDashboardStats = async (req, res, next) => {
     try {
-        const [customerCount] = await db.query("SELECT COUNT(*) as count FROM users WHERE role = 'customer'");
-        const [ownerCount] = await db.query("SELECT COUNT(*) as count FROM users WHERE role = 'salonOwner'");
-        const [totalSalons] = await db.query("SELECT COUNT(*) as count FROM salons");
-        const [pendingSalons] = await db.query("SELECT COUNT(*) as count FROM salons WHERE isVerified = 0");
-        const [totalBookings] = await db.query("SELECT COUNT(*) as count FROM bookings");
-        const [confirmedBookings] = await db.query("SELECT COUNT(*) as count FROM bookings WHERE status = 'confirmed'");
+        const [customerRow] = await db.query("SELECT COUNT(*) as count FROM users WHERE role = 'customer'");
+        const [ownerRow] = await db.query("SELECT COUNT(*) as count FROM users WHERE role = 'salonOwner'");
+        const [totalSalonsRow] = await db.query("SELECT COUNT(*) as count FROM salons");
+        const [pendingSalonsRow] = await db.query("SELECT COUNT(*) as count FROM salons WHERE isVerified = 0");
+        const [totalBookingsRow] = await db.query("SELECT COUNT(*) as count FROM bookings");
+        const [confirmedBookingsRow] = await db.query("SELECT COUNT(*) as count FROM bookings WHERE status = 'confirmed'");
 
         res.status(200).json({
             success: true,
             data: {
                 users: {
-                    customers: customerCount[0]?.count || 0,
-                    salonOwners: ownerCount[0]?.count || 0
+                    customers: customerRow?.count || 0,
+                    salonOwners: ownerRow?.count || 0
                 },
                 salons: {
-                    total: totalSalons[0]?.count || 0,
-                    pending: pendingSalons[0]?.count || 0
+                    total: totalSalonsRow?.count || 0,
+                    pending: pendingSalonsRow?.count || 0
                 },
                 bookings: {
-                    total: totalBookings[0]?.count || 0,
-                    confirmed: confirmedBookings[0]?.count || 0
+                    total: totalBookingsRow?.count || 0,
+                    confirmed: confirmedBookingsRow?.count || 0
                 }
             }
         });

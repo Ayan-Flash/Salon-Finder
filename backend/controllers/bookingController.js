@@ -1,6 +1,19 @@
 const { randomUUID: uuidv4 } = require('crypto');
 const db = require('../config/db');
 
+// Helper to normalize date to YYYY-MM-DD without UTC timezone skew
+const normalizeDate = (d) => {
+    if (!d) return null;
+    if (typeof d === 'string') return d.split('T')[0];
+    if (d instanceof Date) {
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+    return String(d).split('T')[0];
+};
+
 // Helper to format booking object
 const formatBooking = (b) => {
     if (!b) return null;
@@ -98,7 +111,7 @@ exports.createBooking = async (req, res, next) => {
 
         const totalAmount = services.reduce((sum, s) => sum + s.price, 0);
         const bookingId = uuidv4();
-        const dateStr = slot.date instanceof Date ? slot.date.toISOString().split('T')[0] : slot.date;
+        const dateStr = normalizeDate(slot.date);
 
         await db.query(`
             INSERT INTO bookings (
@@ -340,8 +353,8 @@ exports.getSalonBookings = async (req, res, next) => {
         let params = [salon.id];
 
         if (date) {
-            const queryDate = new Date(date).toISOString().split('T')[0];
-            whereSQL += ' AND b.bookingDate = ?';
+            const queryDate = normalizeDate(date);
+            whereSQL += ' AND DATE(b.bookingDate) = ?';
             params.push(queryDate);
         }
 
